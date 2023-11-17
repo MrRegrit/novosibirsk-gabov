@@ -4,13 +4,13 @@ import sys
 import PyQt5.QtWidgets
 import PyQt5.uic
 
-import addEditCoffeeForm
-import Ui
+import UI.addEditCoffeeForm
+import UI.main_Ui
 
 
 class MainWidget(
     PyQt5.QtWidgets.QWidget,
-    Ui.Ui_Form,
+    UI.main_Ui.Ui_Form,
 ):
     def __init__(self):
         super().__init__()
@@ -19,7 +19,7 @@ class MainWidget(
     def initUi(self):
         self.setupUi(self)
 
-        connect = sqlite3.connect("coffee.sqlite")
+        connect = sqlite3.connect("data/coffee.sqlite")
         cursor = connect.cursor()
         coffee = cursor.execute("SELECT * FROM coffee").fetchall()
         connect.close()
@@ -49,7 +49,10 @@ class MainWidget(
         )
 
 
-class AddEditCoffeeWidget(PyQt5.QtWidgets.QWidget, addEditCoffeeForm.Ui_Form):
+class AddEditCoffeeWidget(
+    PyQt5.QtWidgets.QWidget,
+    UI.addEditCoffeeForm.Ui_Form
+):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -63,7 +66,7 @@ class AddEditCoffeeWidget(PyQt5.QtWidgets.QWidget, addEditCoffeeForm.Ui_Form):
             self.load_coffee(0)
 
     def load_coffee_title(self):
-        connect = sqlite3.connect("coffee.sqlite")
+        connect = sqlite3.connect("data/coffee.sqlite")
         cursor = connect.cursor()
         coffee_titles = cursor.execute("SELECT title FROM coffee").fetchall()
         connect.close()
@@ -72,7 +75,7 @@ class AddEditCoffeeWidget(PyQt5.QtWidgets.QWidget, addEditCoffeeForm.Ui_Form):
         self.select_box.addItems(coffee_titles)
 
     def load_coffee(self, s):
-        connect = sqlite3.connect("coffee.sqlite")
+        connect = sqlite3.connect("data/coffee.sqlite")
         cursor = connect.cursor()
         coffee = cursor.execute(
             f"SELECT * FROM coffee " f"WHERE id = {s + 1}",
@@ -93,7 +96,7 @@ class AddEditCoffeeWidget(PyQt5.QtWidgets.QWidget, addEditCoffeeForm.Ui_Form):
         price = self.price.value()
         packege = self.packege.value()
         id = self.select_box.currentIndex() + 1
-        connect = sqlite3.connect("coffee.sqlite")
+        connect = sqlite3.connect("data/coffee.sqlite")
         cursor = connect.cursor()
         cursor.execute(
             "UPDATE coffee "
@@ -118,7 +121,7 @@ class AddEditCoffeeWidget(PyQt5.QtWidgets.QWidget, addEditCoffeeForm.Ui_Form):
         taste = self.taste.text()
         price = self.price.value()
         packege = self.packege.value()
-        connect = sqlite3.connect("coffee.sqlite")
+        connect = sqlite3.connect("data/coffee.sqlite")
         cursor = connect.cursor()
         cursor.execute(
             "INSERT INTO coffee "
