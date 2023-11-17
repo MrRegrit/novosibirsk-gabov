@@ -1,48 +1,53 @@
 import sys
-import random
-import PyQt5.QtGui
+import sqlite3
+
 import PyQt5.QtWidgets
 
 import Ui
 
 
-class Example(PyQt5.QtWidgets.QWidget, Ui.Ui_Form):
+class MainWidget(
+    PyQt5.QtWidgets.QWidget,
+    Ui.Ui_Form,
+):
     def __init__(self):
         super().__init__()
-        self.initUI()
+        self.initUi()
 
-    def initUI(self):
+    def initUi(self):
         self.setupUi(self)
-        self.setWindowTitle('Рисование')
-        self.do_paint = False
-        self.pushButton.clicked.connect(self.paint)
 
-    def paintEvent(self, event):
-        if self.do_paint:
-            qp = PyQt5.QtGui.QPainter()
-            qp.begin(self)
-            self.draw_flag(qp)
-            qp.end()
-        self.do_paint = False
+        connect = sqlite3.connect("coffee.sqlite")
+        cursor = connect.cursor()
+        coffee = cursor.execute("SELECT * FROM coffee").fetchall()
 
-    def paint(self):
-        self.do_paint = True
-        self.update()
+        self.table.setRowCount(len(coffee))
+        self.table.setColumnCount(7)
 
-    def draw_flag(self, qp):
-        r = random.randint(1, 100)
-        colors = [random.randint(0, 255) for _ in range(3)]
-        qp.setBrush(PyQt5.QtGui.QColor(*colors))
-        qp.drawEllipse(
-            random.randint(1, 100),
-            random.randint(1, 100),
-            r,
-            r,
+        for y, cof in enumerate(coffee):
+            for x, table_item in enumerate(cof):
+                self.table.setItem(
+                    y,
+                    x,
+                    PyQt5.QtWidgets.QTableWidgetItem(str(table_item)),
+                )
+
+        self.table.resizeColumnsToContents()
+        self.table.setHorizontalHeaderLabels(
+            [
+                'ID',
+                'название сорта',
+                'степень обжарки',
+                'молотый/в зернах',
+                'описание вкуса',
+                'цена',
+                'объем упаковки'
+            ],
         )
 
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
-    ex = Example()
+    ex = MainWidget()
     ex.show()
     sys.exit(app.exec())
