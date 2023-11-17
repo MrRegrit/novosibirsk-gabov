@@ -2,16 +2,17 @@ import sys
 import random
 import PyQt5.QtGui
 import PyQt5.QtWidgets
-import PyQt5.uic
+
+import Ui
 
 
-class Example(PyQt5.QtWidgets.QWidget):
+class Example(PyQt5.QtWidgets.QWidget, Ui.Ui_Form):
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        PyQt5.uic.loadUi("Ui.ui", self)
+        self.setupUi(self)
         self.setWindowTitle('Рисование')
         self.do_paint = False
         self.pushButton.clicked.connect(self.paint)
@@ -30,7 +31,8 @@ class Example(PyQt5.QtWidgets.QWidget):
 
     def draw_flag(self, qp):
         r = random.randint(1, 100)
-        qp.setBrush(PyQt5.QtGui.QColor(255, 255, 0))
+        colors = [random.randint(0, 255) for _ in range(3)]
+        qp.setBrush(PyQt5.QtGui.QColor(*colors))
         qp.drawEllipse(
             random.randint(1, 100),
             random.randint(1, 100),
